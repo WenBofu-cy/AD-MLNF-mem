@@ -6,8 +6,8 @@
 所属分区: 三、漏斗二：自动驾驶自成长漏斗 / 晋升与遗忘执行机制
 核心职责: 执行经验条目从当前层级向上一层存储分区的物理搬运。接收晋升候选清单后，
           将条目的完整经验数据从源层级复制写入目标层级，校验写入完整性后，在源层级
-          标记删除或正式清除。编译期硬约束禁止高层级向低层级回退搬运。确保搬运过程的
-          原子性。
+          标记删除或正式清除。编译期硬约束禁止高层级向低层级回退搬运。确保搬运过程
+          的原子性。
 
 依赖模块: ad-38(晋升双条件判定单元，提供晋升候选清单),
           ad-20/22/24/26/28(各层级存储单元，提供源数据与接收写入)
@@ -62,14 +62,7 @@ class PromotionCandidate:
     i_value: float
     priority: float
     notes: str = ""
-
-
-@dataclass
-class TransferRequest:
-    """搬运请求"""
-    request_id: str
-    candidate: PromotionCandidate
-    l5_security_token: Optional[str] = None
+    l5_security_token: Optional[str] = None  # 用于 L5 写入的令牌
 
 
 @dataclass
@@ -128,6 +121,7 @@ class LayerTransferUnit:
         self._total_batches = 0
         self._total_transferred = 0
         self._total_failed = 0
+        self._total_aborted = 0
         
         # 当前批次快照（用于回滚或中断）
         self._current_batch: Optional[List[TransferReport]] = None
@@ -165,6 +159,7 @@ class LayerTransferUnit:
                 report.message = "紧急熔断中断"
                 aborted.append(report)
         
+        self._total_aborted += len(aborted)
         print(f"[{self.module_id}] 紧急熔断: 中断搬运, {len(aborted)} 条未完成")
         return aborted
     
@@ -190,7 +185,7 @@ class LayerTransferUnit:
             批次搬运汇总
         """
         if self.state != TransferState.IDLE:
-            return BatchTransferResult("", 0, 0, 0, [], 0)
+            return BatchTransferResult("", 0, 0, 0, [], 0, time.time())
         
         self.state = TransferState.TRANSFERRING
         start_time = time.time()
@@ -199,7 +194,7 @@ class LayerTransferUnit:
         # 按优先级排序
         sorted_candidates = sorted(candidates, key=lambda x: x.priority, reverse=True)
         
-        reports = []
+        reports: List[TransferReport] = []
         success_count = 0
         failed_count = 0
         
@@ -218,6 +213,7 @@ class LayerTransferUnit:
                 reports.append(report)
                 self._current_batch.append(report)
                 failed_count += 1
+                self._total_aborted += 1
                 continue
             
             report = self._transfer_single(
@@ -245,7 +241,8 @@ class LayerTransferUnit:
             success=success_count,
             failed=failed_count,
             details=reports,
-            duration_ms=duration_ms
+            duration_ms=duration_ms,
+            timestamp=time.time()
         )
         
         self._current_batch = None
@@ -256,10 +253,10 @@ class LayerTransferUnit:
     
     def _transfer_single(self,
                          candidate: PromotionCandidate,
-                         read_source: Callable,
-                         write_target: Callable,
-                         delete_source: Callable,
-                         l5_token_validator: Optional[Callable] = None) -> TransferReport:
+                         read_source: Callable[[str, str], Optional[Dict[str, Any]]],
+                         write_target: Callable[[str, Dict[str, Any]], bool],
+                         delete_source: Callable[[str, str], bool],
+                         l5_token_validator: Optional[Callable[[str, str], bool]] = None) -> TransferReport:
         """
         搬运单条经验
         
@@ -278,17 +275,20 @@ class LayerTransferUnit:
         if dst == "L5" and l5_token_validator is not None:
             token = getattr(candidate, 'l5_security_token', None)
             if not l5_token_validator(entry_id, token):
-                return TransferReport(entry_id, TransferResult.FAIL_L5_TOKEN_MISSING, src, dst, "L5令牌验证失败")
+                return TransferReport(entry_id, TransferResult.FAIL_L5_TOKEN_MISSING, src, dst,
+                                    "L5令牌验证失败")
         
         # 1. 读取源数据
         source_data = read_source(src, entry_id)
         if source_data is None:
-            return TransferReport(entry_id, TransferResult.FAIL_SOURCE_NOT_FOUND, src, dst, "源条目不存在")
+            return TransferReport(entry_id, TransferResult.FAIL_SOURCE_NOT_FOUND, src, dst,
+                                "源条目不存在")
         
         # 2. 写入目标层级
         write_ok = write_target(dst, source_data)
         if not write_ok:
-            return TransferReport(entry_id, TransferResult.FAIL_TARGET_WRITE_ERROR, src, dst, "目标层级写入失败")
+            return TransferReport(entry_id, TransferResult.FAIL_TARGET_WRITE_ERROR, src, dst,
+                                "目标层级写入失败")
         
         # 3. 删除源层级条目
         delete_ok = delete_source(src, entry_id)
@@ -333,11 +333,14 @@ class LayerTransferUnit:
         self._pending_logs.clear()
         return logs
     
+    # ========== 查询接口 ==========
+    
     def get_statistics(self) -> Dict[str, Any]:
         return {
             "total_batches": self._total_batches,
             "total_transferred": self._total_transferred,
             "total_failed": self._total_failed,
+            "total_aborted": self._total_aborted,
             "state": self.state.value
         }
 
@@ -352,15 +355,19 @@ if __name__ == "__main__":
     
     # 模拟存储
     store = {
-        "L1": {"EXP-001": {"entry_id": "EXP-001", "data": "test_data", "i_value": 0.55}},
-        "L2": {}, "L3": {}, "L4": {}, "L5": {}
+        "L1": {},
+        "L2": {},
+        "L3": {},
+        "L4": {},
+        "L5": {}
     }
     
     def read_src(layer, eid):
         return store.get(layer, {}).get(eid)
     
     def write_dst(layer, data):
-        if layer not in store: return False
+        if layer not in store:
+            return False
         store[layer][data["entry_id"]] = data
         return True
     
@@ -370,7 +377,10 @@ if __name__ == "__main__":
             return True
         return False
     
-    # TC-39-01: 正常 L1→L2 搬运
+    def l5_token_ok(eid, token):
+        return token == "valid_l5_token"
+    
+    # --- TC-39-01: 正常 L1→L2 搬运 ---
     print("\n[TC-39-01] 正常 L1→L2 搬运")
     try:
         store["L1"]["EXP-001"] = {"entry_id": "EXP-001", "data": "test"}
@@ -385,7 +395,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"   ❌ FAIL: {e}"); failed += 1
     
-    # TC-39-02: 禁止回退搬运 L2→L1
+    # --- TC-39-02: 禁止回退搬运 L2→L1 ---
     print("\n[TC-39-02] 禁止回退搬运 L2→L1")
     try:
         unit = LayerTransferUnit()
@@ -397,7 +407,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"   ❌ FAIL: {e}"); failed += 1
     
-    # TC-39-03: 禁止跨级搬运 L1→L3
+    # --- TC-39-03: 禁止跨级搬运 L1→L3 ---
     print("\n[TC-39-03] 禁止跨级搬运 L1→L3")
     try:
         unit = LayerTransferUnit()
@@ -405,6 +415,132 @@ if __name__ == "__main__":
         result = unit.execute_batch(candidates, read_src, write_dst, del_src)
         assert result.failed == 1
         assert result.details[0].result == TransferResult.FAIL_LAYER_INVALID
+        print("   ✅ PASS"); passed += 1
+    except Exception as e:
+        print(f"   ❌ FAIL: {e}"); failed += 1
+    
+    # --- TC-39-04: 源条目不存在 ---
+    print("\n[TC-39-04] 源条目不存在")
+    try:
+        store["L1"] = {}
+        unit = LayerTransferUnit()
+        candidates = [PromotionCandidate("EXP-004", "L1", "L2", 0.5, 1.0)]
+        result = unit.execute_batch(candidates, read_src, write_dst, del_src)
+        assert result.failed == 1
+        assert result.details[0].result == TransferResult.FAIL_SOURCE_NOT_FOUND
+        print("   ✅ PASS"); passed += 1
+    except Exception as e:
+        print(f"   ❌ FAIL: {e}"); failed += 1
+    
+    # --- TC-39-05: 目标写入失败 ---
+    print("\n[TC-39-05] 目标写入失败")
+    try:
+        store["L1"]["EXP-005"] = {"entry_id": "EXP-005", "data": "test"}
+        store["L2"] = {}
+        
+        def write_fail(layer, data):
+            return False
+        
+        unit = LayerTransferUnit()
+        candidates = [PromotionCandidate("EXP-005", "L1", "L2", 0.5, 1.0)]
+        result = unit.execute_batch(candidates, read_src, write_fail, del_src)
+        assert result.failed == 1
+        assert result.details[0].result == TransferResult.FAIL_TARGET_WRITE_ERROR
+        # 源条目应保留
+        assert "EXP-005" in store["L1"]
+        print("   ✅ PASS"); passed += 1
+    except Exception as e:
+        print(f"   ❌ FAIL: {e}"); failed += 1
+    
+    # --- TC-39-06: 源删除失败（目标已写入） ---
+    print("\n[TC-39-06] 目标写入成功，源删除失败 → 标记错误")
+    try:
+        store["L1"]["EXP-006"] = {"entry_id": "EXP-006", "data": "test"}
+        store["L2"] = {}
+        
+        def del_fail(layer, eid):
+            return False
+        
+        unit = LayerTransferUnit()
+        candidates = [PromotionCandidate("EXP-006", "L1", "L2", 0.5, 1.0)]
+        result = unit.execute_batch(candidates, read_src, write_dst, del_fail)
+        assert result.failed == 1
+        assert result.details[0].result == TransferResult.FAIL_SOURCE_DELETE_ERROR
+        # 目标应已写入
+        assert "EXP-006" in store["L2"]
+        # 源可能仍存在（数据重复但不丢失）
+        print("   ✅ PASS"); passed += 1
+    except Exception as e:
+        print(f"   ❌ FAIL: {e}"); failed += 1
+    
+    # --- TC-39-07: L5 令牌缺失 ---
+    print("\n[TC-39-07] L5 搬运令牌缺失 → 失败")
+    try:
+        store["L4"]["EXP-007"] = {"entry_id": "EXP-007", "data": "test"}
+        store["L5"] = {}
+        unit = LayerTransferUnit()
+        candidates = [PromotionCandidate("EXP-007", "L4", "L5", 0.85, 1.0, l5_security_token=None)]
+        result = unit.execute_batch(candidates, read_src, write_dst, del_src, l5_token_ok)
+        assert result.failed == 1
+        assert result.details[0].result == TransferResult.FAIL_L5_TOKEN_MISSING
+        print("   ✅ PASS"); passed += 1
+    except Exception as e:
+        print(f"   ❌ FAIL: {e}"); failed += 1
+    
+    # --- TC-39-08: L5 令牌验证成功 ---
+    print("\n[TC-39-08] L5 搬运令牌有效 → 搬运成功")
+    try:
+        store["L4"]["EXP-008"] = {"entry_id": "EXP-008", "data": "test"}
+        store["L5"] = {}
+        unit = LayerTransferUnit()
+        candidates = [PromotionCandidate("EXP-008", "L4", "L5", 0.85, 1.0, l5_security_token="valid_l5_token")]
+        result = unit.execute_batch(candidates, read_src, write_dst, del_src, l5_token_ok)
+        assert result.success == 1
+        assert "EXP-008" in store["L5"]
+        assert "EXP-008" not in store["L4"]
+        print("   ✅ PASS"); passed += 1
+    except Exception as e:
+        print(f"   ❌ FAIL: {e}"); failed += 1
+    
+    # --- TC-39-09: 紧急熔断中断 ---
+    print("\n[TC-39-09] 紧急熔断中断搬运")
+    try:
+        store["L1"]["EXP-A"] = {"entry_id": "EXP-A", "data": "a"}
+        store["L1"]["EXP-B"] = {"entry_id": "EXP-B", "data": "b"}
+        store["L2"] = {}
+        unit = LayerTransferUnit()
+        unit.state = TransferState.TRANSFERRING  # 模拟搬运中
+        # 模拟部分完成
+        unit._current_batch = [
+            TransferReport("EXP-A", TransferResult.SUCCESS, "L1", "L2", "ok"),
+            TransferReport("EXP-B", TransferResult.SUCCESS, "L1", "L2", "ok")
+        ]
+        aborted = unit.emergency_abort()
+        # 已成功的应保留，所以 aborted 应为空
+        assert len(aborted) == 0
+        # 再发起新批次搬运，应处于暂停状态
+        candidates = [PromotionCandidate("EXP-C", "L1", "L2", 0.5, 1.0)]
+        result = unit.execute_batch(candidates, read_src, write_dst, del_src)
+        assert result.total == 0  # 因为状态非 IDLE
+        print("   ✅ PASS"); passed += 1
+    except Exception as e:
+        print(f"   ❌ FAIL: {e}"); failed += 1
+    
+    # --- TC-39-10: 批量搬运统计 ---
+    print("\n[TC-39-10] 批量搬运统计正确")
+    try:
+        store["L1"]["EXP-X"] = {"entry_id": "EXP-X", "data": "x"}
+        store["L1"]["EXP-Y"] = {"entry_id": "EXP-Y", "data": "y"}
+        store["L2"] = {}
+        unit = LayerTransferUnit()
+        candidates = [
+            PromotionCandidate("EXP-X", "L1", "L2", 0.6, 0.9),
+            PromotionCandidate("EXP-Y", "L1", "L2", 0.5, 0.8)
+        ]
+        result = unit.execute_batch(candidates, read_src, write_dst, del_src)
+        assert result.total == 2
+        assert result.success == 2
+        assert unit.get_statistics()["total_transferred"] == 2
         print("   ✅ PASS"); passed += 1
     except Exception as e:
         print(f"   ❌ FAIL: {e}"); failed += 1
