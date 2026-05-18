@@ -1,8 +1,3 @@
-**文件路径：** `ad-mlnf-mem/src/ad-30-l5-access-control.py`
-
-**提交信息：** `c`
-
-```python
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
