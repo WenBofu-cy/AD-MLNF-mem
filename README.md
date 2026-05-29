@@ -63,24 +63,24 @@ L1 临时层 → L2 近期层 → L3 中期层 → L4 长期层 → L5 核心层
 
 | 编号 | 模块名称 |
 |:---:|------|
-| 01 | [总控漏斗F0-双漏斗全局调度中枢](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-01-双漏斗全局调度中枢.md) |
-| 02 | [漏斗一专属调度单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-02-漏斗一专属调度单元.md) |
-| 03 | [漏斗二专属调度单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-03-漏斗二专属调度单元.md) |
+| 01 | [总控漏斗F0-双漏斗全局调度中枢](./spec/ad-01-双漏斗全局调度中枢.md) |
+| 02 | [漏斗一专属调度单元](./spec/ad-02-漏斗一专属调度单元.md) |
+| 03 | [漏斗二专属调度单元](./spec/ad-03-漏斗二专属调度单元.md) |
 
 ### 分区二：漏斗一——驾驶员画像漏斗（04–13）
 
 | 编号 | 模块名称 |
 |:---:|------|
-| 04 | [驾驶员身份识别单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-04-驾驶员身份识别单元.md) |
-| 05 | [子画像槽创建与初始化单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-05-子画像槽创建与初始化单元.md) |
-| 06 | [子画像槽数据隔离管控单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-06-子画像槽数据隔离管控单元.md) |
-| 07 | [驾驶行为观测记录单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-07-驾驶行为观测记录单元.md) |
-| 08 | [上下文场景标记单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-08-上下文场景标记单元.md) |
-| 09 | [行为判定标签单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-09-行为判定标签单元.md) |
-| 10 | [行为累积统计单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-10-行为累积统计单元.md) |
-| 11 | [驾驶辅助提醒生成单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-11-驾驶辅助提醒生成单元.md) |
-| 12 | [临时画像槽自动清除单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-12-临时画像槽自动清除单元.md) |
-| 13 | [子画像槽长期未活跃提醒单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-13-子画像槽长期未活跃提醒单元.md) |
+| 04 | [驾驶员身份识别单元](./spec/ad-04-驾驶员身份识别单元.md) |
+| 05 | [子画像槽创建与初始化单元](./spec/ad-05-子画像槽创建与初始化单元.md) |
+| 06 | [子画像槽数据隔离管控单元](./spec/ad-06-子画像槽数据隔离管控单元.md) |
+| 07 | [驾驶行为观测记录单元](./spec/ad-07-驾驶行为观测记录单元.md) |
+| 08 | [上下文场景标记单元](./spec/ad-08-上下文场景标记单元.md) |
+| 09 | [行为判定标签单元](./spec/ad-09-行为判定标签单元.md) |
+| 10 | [行为累积统计单元](./spec/ad-10-行为累积统计单元.md) |
+| 11 | [驾驶辅助提醒生成单元](./spec/ad-11-驾驶辅助提醒生成单元.md) |
+| 12 | [临时画像槽自动清除单元](./spec/ad-12-临时画像槽自动清除单元.md) |
+| 13 | [子画像槽长期未活跃提醒单元](./spec/ad-13-子画像槽长期未活跃提醒单元.md) |
 
 ### 分区三：漏斗二——自动驾驶自成长漏斗（14–43）
 
@@ -88,69 +88,69 @@ L1 临时层 → L2 近期层 → L3 中期层 → L4 长期层 → L5 核心层
 
 | 编号 | 模块名称 |
 |:---:|------|
-| 14 | [场景判定与分槽路由单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-14-场景判定与分槽路由单元.md) |
-| 15 | [高速巡航槽](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-15-高速巡航槽.md) |
-| 16 | [城区路口槽](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-16-城区路口槽.md) |
-| 17 | [泊车低速槽](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-17-泊车低速槽.md) |
-| 18 | [特殊环境槽](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-18-特殊环境槽.md) |
-| 19 | [通用驾驶槽](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-19-通用驾驶槽.md) |
+| 14 | [场景判定与分槽路由单元](./spec/ad-14-场景判定与分槽路由单元.md) |
+| 15 | [高速巡航槽](./spec/ad-15-高速巡航槽.md) |
+| 16 | [城区路口槽](./spec/ad-16-城区路口槽.md) |
+| 17 | [泊车低速槽](./spec/ad-17-泊车低速槽.md) |
+| 18 | [特殊环境槽](./spec/ad-18-特殊环境槽.md) |
+| 19 | [通用驾驶槽](./spec/ad-19-通用驾驶槽.md) |
 
 **3.2 五层记忆层级存储（20–30）**
 
 | 编号 | 模块名称 |
 |:---:|------|
-| 20 | [L1临时层存储单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-20-L1-临时层存储单元.md) |
-| 21 | [L1临时层时序衰减单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-21-L1-临时层时序衰减单元.md) |
-| 22 | [L2近期层存储单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-22-L2-近期层存储单元.md) |
-| 23 | [L2近期层热度统计单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-23-L2-近期层热度统计单元.md) |
-| 24 | [L3中期层存储单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-24-L3-中期层存储单元.md) |
-| 25 | [L3中期层相似经验归并单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-25-L3-中期层相似经验归并单元.md) |
-| 26 | [L4长期层存储单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-26-L4-长期层存储单元.md) |
-| 27 | [L4长期层经验抽象提炼单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-27-L4-长期层经验抽象提炼单元.md) |
-| 28 | [L5核心层存储单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-28-L5-核心层存储单元.md) |
-| 29 | [L5核心层安全规则硬锁定单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-29-L5-核心层安全规则硬锁定单元.md) |
-| 30 | [L5核心层防篡改与只读管控单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-30-L5-核心层防篡改与只读管控单元.md) |
+| 20 | [L1临时层存储单元](./spec/ad-20-L1-临时层存储单元.md) |
+| 21 | [L1临时层时序衰减单元](./spec/ad-21-L1-临时层时序衰减单元.md) |
+| 22 | [L2近期层存储单元](./spec/ad-22-L2-近期层存储单元.md) |
+| 23 | [L2近期层热度统计单元](./spec/ad-23-L2-近期层热度统计单元.md) |
+| 24 | [L3中期层存储单元](./spec/ad-24-L3-中期层存储单元.md) |
+| 25 | [L3中期层相似经验归并单元](./spec/ad-25-L3-中期层相似经验归并单元.md) |
+| 26 | [L4长期层存储单元](./spec/ad-26-L4-长期层存储单元.md) |
+| 27 | [L4长期层经验抽象提炼单元](./spec/ad-27-L4-长期层经验抽象提炼单元.md) |
+| 28 | [L5核心层存储单元](./spec/ad-28-L5-核心层存储单元.md) |
+| 29 | [L5核心层安全规则硬锁定单元](./spec/ad-29-L5-核心层安全规则硬锁定单元.md) |
+| 30 | [L5核心层防篡改与只读管控单元](./spec/ad-30-L5-核心层防篡改与只读管控单元.md) |
 
 **3.3 三维重要度计算引擎（31–37）**
 
 | 编号 | 模块名称 |
 |:---:|------|
-| 31 | [安全显著性S值计算单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-31-安全显著性S值计算单元.md) |
-| 32 | [风格匹配度V值计算单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-32-风格匹配度V值计算单元.md) |
-| 33 | [复用频次C值统计单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-33-复用频次C值统计单元.md) |
-| 34 | [基础重要度I₀赋值单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-34-基础重要度I0赋值单元.md) |
-| 35 | [三维权重系数配置单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-35-三维权重系数配置单元.md) |
-| 36 | [综合重要度I值聚合计算单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-36-综合重要度I值聚合计算单元.md) |
-| 37 | [重要度增量定时刷新单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-37-重要度增量定时刷新单元.md) |
+| 31 | [安全显著性S值计算单元](./spec/ad-31-安全显著性S值计算单元.md) |
+| 32 | [风格匹配度V值计算单元](./spec/ad-32-风格匹配度V值计算单元.md) |
+| 33 | [复用频次C值统计单元](./spec/ad-33-复用频次C值统计单元.md) |
+| 34 | [基础重要度I₀赋值单元](./spec/ad-34-基础重要度I0赋值单元.md) |
+| 35 | [三维权重系数配置单元](./spec/ad-35-三维权重系数配置单元.md) |
+| 36 | [综合重要度I值聚合计算单元](./spec/ad-36-综合重要度I值聚合计算单元.md) |
+| 37 | [重要度增量定时刷新单元](./spec/ad-37-重要度增量定时刷新单元.md) |
 
 **3.4 晋升与遗忘执行机制（38–43）**
 
 | 编号 | 模块名称 |
 |:---:|------|
-| 38 | [晋升双条件判定单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-38-晋升双条件判定单元.md) |
-| 39 | [层级单向搬运写入单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-39-层级单向搬运写入单元.md) |
-| 40 | [遗忘阈值判定单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-40-遗忘阈值判定单元.md) |
-| 41 | [最低复用次数校验单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-41-最低复用次数校验单元.md) |
-| 42 | [冗余记忆删除与归档单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-42-冗余记忆删除与归档单元.md) |
-| 43 | [失败经验安全仲裁三道校验单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-43-失败经验安全仲裁三道校验单元.md) |
+| 38 | [晋升双条件判定单元](./spec/ad-38-晋升双条件判定单元.md) |
+| 39 | [层级单向搬运写入单元](./spec/ad-39-层级单向搬运写入单元.md) |
+| 40 | [遗忘阈值判定单元](./spec/ad-40-遗忘阈值判定单元.md) |
+| 41 | [最低复用次数校验单元](./spec/ad-41-最低复用次数校验单元.md) |
+| 42 | [冗余记忆删除与归档单元](./spec/ad-42-冗余记忆删除与归档单元.md) |
+| 43 | [失败经验安全仲裁三道校验单元](./spec/ad-43-失败经验安全仲裁三道校验单元.md) |
 
 ### 分区四：漏斗外挂扩展区（44–47 · 物理隔离）
 
 | 编号 | 模块名称 |
 |:---:|------|
-| 44 | [独立世界模型库](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-44-独立世界模型库.md) |
-| 45 | [交通法律法规库](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-45-交通法律法规库.md) |
-| 46 | [道路参与者情绪意图感知库](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-46-道路参与者情绪意图感知库.md) |
-| 47 | [疑问缓存库](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-47-疑问缓存库.md) |
+| 44 | [独立世界模型库](./spec/ad-44-独立世界模型库.md) |
+| 45 | [交通法律法规库](./spec/ad-45-交通法律法规库.md) |
+| 46 | [道路参与者情绪意图感知库](./spec/ad-46-道路参与者情绪意图感知库.md) |
+| 47 | [疑问缓存库](./spec/ad-47-疑问缓存库.md) |
 
 ### 分区五：存储与系统运维（48–51）
 
 | 编号 | 模块名称 |
 |:---:|------|
-| 48 | [全局容量配额管控单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-48-全局容量配额管控单元.md) |
-| 49 | [存储压缩与冷归档单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-49-存储压缩与冷归档单元.md) |
-| 50 | [记忆导入导出与脱敏共享单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-50-记忆导入导出与脱敏共享单元.md) |
-| 51 | [记忆变更日志追溯单元](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/spec/ad-51-记忆变更日志追溯单元.md) |
+| 48 | [全局容量配额管控单元](./spec/ad-48-全局容量配额管控单元.md) |
+| 49 | [存储压缩与冷归档单元](./spec/ad-49-存储压缩与冷归档单元.md) |
+| 50 | [记忆导入导出与脱敏共享单元](./spec/ad-50-记忆导入导出与脱敏共享单元.md) |
+| 51 | [记忆变更日志追溯单元](./spec/ad-51-记忆变更日志追溯单元.md) |
 
 
 ## 四、目录结构
@@ -158,15 +158,16 @@ L1 临时层 → L2 近期层 → L3 中期层 → L4 长期层 → L5 核心层
 ```
 AD-mlnf-mem/
 ├── README.md
+├── [DISCLAIMER.md](DISCLAIMER.md)
 ├── LICENSE
-├── spec/                  ← 51个模块接口规格文档
+├── spec/
 │   ├── README.md
 │   ├── ad-01-双漏斗全局调度中枢.md
 │   └── ...
-├── src/                   ← 51个模块 Python 源代码
-│   ├── [bus.py](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/src/bus.py)
-│   ├── [main.py](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/src/main.py)
-│   ├── [module_registry.py](https://gitee.com/expanding-research/ad-mlnf-mem/blob/master/src/module_registry.py)
+├── src/
+│   ├── [bus.py](./src/bus.py)
+│   ├── [main.py](./src/main.py)
+│   ├── [module_registry.py](./src/module_registry.py)
 │   └── ...
 └── .gitignore
 ```
@@ -183,9 +184,9 @@ AD-mlnf-mem/
 所有跨系统通信统一走 **MemoryBus** 全局记忆总线。
 
 
-## 六、开源协议
+## 六、开源协议与免责声明
 
-本仓库内容采用 **CC BY 4.0**（知识共享署名 4.0 国际许可证）进行全球开源授权。
+本仓库内容采用 **CC BY 4.0**（知识共享署名 4.0 国际许可证）进行全球开源授权。使用前请阅读 [免责声明](DISCLAIMER.md)。
 
 - 必须显著保留原作者署名：**文波福**
 - 架构首创权永久归属原作者，不可剥夺、不可转移
@@ -207,3 +208,4 @@ AD-mlnf-mem/
 ## 九、镜像仓库
 
 本仓库同步镜像至 [GitHub](https://github.com/expanding-research/ad-mlnf-mem)
+
